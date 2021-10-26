@@ -1,6 +1,10 @@
 import * as pulumi from '@pulumi/pulumi'
+import * as hacks from '@vizv/pulumi-workarounds'
 
-export const heredoc = (literals: TemplateStringsArray, ...outputs: pulumi.Input<any>[]) =>
+export const heredoc = (
+  literals: TemplateStringsArray,
+  ...outputs: pulumi.Input<any>[]
+) =>
   pulumi.all(outputs).apply((placeholders) =>
     literals
       .slice(1)
@@ -13,3 +17,9 @@ export const heredoc = (literals: TemplateStringsArray, ...outputs: pulumi.Input
       .map((line) => line.trim())
       .join('\n'),
   )
+
+export class OrganizationStackReference extends pulumi.StackReference {
+  constructor(project: string, stack: string = pulumi.getStack()) {
+    super(`${hacks.getOrganization()}/${project}/${stack}`)
+  }
+}
